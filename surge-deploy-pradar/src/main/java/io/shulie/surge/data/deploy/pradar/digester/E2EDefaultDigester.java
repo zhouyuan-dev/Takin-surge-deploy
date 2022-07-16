@@ -122,7 +122,7 @@ public class E2EDefaultDigester implements DataDigester<RpcBased> {
         RpcBased rpcBased = context.getContent();
         //客户端rpc日志不计算指标,只计算服务端日志,和链路拓扑图保持一致
         if (PradarLogType.LOG_TYPE_FLOW_ENGINE == rpcBased.getLogType()
-            || (PradarLogType.LOG_TYPE_RPC_CLIENT == rpcBased.getLogType() && MiddlewareType.TYPE_RPC == rpcBased.getRpcType())) {
+                || (PradarLogType.LOG_TYPE_RPC_CLIENT == rpcBased.getLogType() && MiddlewareType.TYPE_RPC == rpcBased.getRpcType())) {
             return;
         }
         RpcBasedParser rpcBasedParser = RpcBasedParserFactory.getInstance(rpcBased.getLogType(), rpcBased.getRpcType());
@@ -150,8 +150,8 @@ public class E2EDefaultDigester implements DataDigester<RpcBased> {
             String tenantConfig = traceMetricsTenantConfig.get();
             //不在业务活动拓扑图中的边,如果需要提供服务监控接口性能查询,走应用配置和租户配置查询(客户端日志不计算)
             if (rpcBased.getLogType() == PradarLogType.LOG_TYPE_RPC_CLIENT
-                || !(checkAppName(appNameConfig, appName)
-                || checkTenant(tenantConfig, rpcBased.getUserAppKey(), rpcBased.getEnvCode()))) {
+                    || !(checkAppName(appNameConfig, appName)
+                    || checkTenant(tenantConfig, rpcBased.getUserAppKey(), rpcBased.getEnvCode()))) {
 
                 //重复的边ID只打印一次
                 if (StringUtils.isBlank(cache.getIfPresent(edgeId))) {
@@ -228,9 +228,9 @@ public class E2EDefaultDigester implements DataDigester<RpcBased> {
             String assertClusterTest = rpcBased.isClusterTest() ? "1" : "0";
             for (String exceptionType : exceptionTypeList) {
                 String[] tags = new String[]{nodeId, parsedAppName, parsedServiceName, parsedMethod, rpcType,
-                    assertClusterTest, exceptionType};
+                        assertClusterTest, exceptionType};
                 CallStat callStat = new CallStat(
-                    simpling, 0, simpling * rpcBased.getCost(), simpling, simpling);
+                        simpling, 0, simpling * rpcBased.getCost(), simpling, simpling);
                 e2eAssertMetrics.addToSlot(Metric.of(PradarRtConstant.E2E_ASSERT_METRICS_ID_TRACE, tags,
                         "", new String[]{}), callStat);
             }
@@ -266,9 +266,9 @@ public class E2EDefaultDigester implements DataDigester<RpcBased> {
             String traceId = traceMetrics.getTraceId();
             // 总次数/成功次数/totalRt/错误次数/hitCount/totalTps/总次数(不计算采样率)/e2e成功次数/e2e失败次数/最大耗时
             CallStat callStat = new CallStat(traceId, sqlStatement,
-                traceMetrics.getTotalCount(), traceMetrics.getSuccessCount(), traceMetrics.getTotalRt(),
-                traceMetrics.getFailureCount(), traceMetrics.getHitCount(), traceMetrics.getQps().longValue(),
-                1, traceMetrics.getE2eSuccessCount(), traceMetrics.getE2eErrorCount(), traceMetrics.getMaxRt());
+                    traceMetrics.getTotalCount(), traceMetrics.getSuccessCount(), traceMetrics.getTotalRt(),
+                    traceMetrics.getFailureCount(), traceMetrics.getHitCount(), traceMetrics.getQps().longValue(),
+                    1, traceMetrics.getE2eSuccessCount(), traceMetrics.getE2eErrorCount(), traceMetrics.getMaxRt());
             e2eTraceMetricsSlot.addToSlot(Metric.of(PradarRtConstant.METRICS_ID_TRACE, tags.toArray(new String[0]), "", new String[]{}), callStat);
         } catch (Exception e) {
             logger.error(ExceptionUtils.getStackTrace(e));
@@ -298,6 +298,8 @@ public class E2EDefaultDigester implements DataDigester<RpcBased> {
         e2eNodeCache.autoRefresh(mysqlSupport);
         RuleFactory.INSTANCE.regsiterVariant(new Class[]{RpcBased.class}, new String[]{"node"});
         logger.info("e2eNodeCache:{}", e2eNodeCache);
+        // 初始化边缓存
+        eagleLoader.init();
     }
 
     private boolean checkAppName(String appNameConfig, String appName) {
