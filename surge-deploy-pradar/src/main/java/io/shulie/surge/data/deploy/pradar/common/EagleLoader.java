@@ -57,7 +57,7 @@ public class EagleLoader {
                     String countSql = String.format(QUERY_LINK_EDGE_COUNT, linkConfig);
                     Integer count = mysqlSupport.queryForObject(countSql, Integer.class);
                     if (count > pageSize) {
-                        logger.warn("当前{}对应的边已超1000,请检查！！！", linkId);
+                        logger.warn("当前{}对应的边为{},请检查是否存在数据异常！！！", linkId, count);
                     }
                     String querySql = String.format(QUERY_LINK_EDGE, linkId, pageSize);
                     List<Map<String, Object>> edgeList = mysqlSupport.queryForList(querySql);
